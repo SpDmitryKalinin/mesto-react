@@ -3,7 +3,7 @@ import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
-import ImagePopup from './ImagePopupg';
+import ImagePopup from './ImagePopup';
 function App() {
     const [isEditProfilePopupOpen, handleEditProfileClick] = useState(false);
     const [isAddPlacePopupOpen, handleAddPlaceClick] = useState(false);
