@@ -3,7 +3,7 @@ import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
-import PopupWithImage from './PopupWithImage';
+import ImagePopup from './ImagePopupg';
 function App() {
     const [isEditProfilePopupOpen, handleEditProfileClick] = useState(false);
     const [isAddPlacePopupOpen, handleAddPlaceClick] = useState(false);
@@ -39,7 +39,7 @@ function App() {
 
         <PopupWithForm name="confirm" title="Вы уверены?" isOpen = {false}/>
 
-        <PopupWithImage card = {selectedCard} isClose = {() => closeAllPopups(handleCardClick)}/>
+        <ImagePopup card = {selectedCard} isClose = {() => closeAllPopups(handleCardClick)}/>
     </div>
     );
     function closeAllPopups(handler){

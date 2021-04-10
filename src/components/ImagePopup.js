@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class PopupWithImage extends React.Component{
+export default class ImagePopup extends React.Component{
     constructor(props){
         super(props);
     }
