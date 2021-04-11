@@ -1,19 +1,20 @@
 import React from 'react';
-import apiClass from '../utils/Api';
+import api from '../utils/Api';
 import Card from './Card.js';
 
 export default class Main extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            userName: "Жак ив Кусто",
-            userDescription: "Исследователь",
+            userName: "",
+            userDescription: "",
             userAvatar: "",
             cards: []
         }
     }
     render(){
-        return (<main className="main">
+        return (
+        <main className="main">
             <section className="profile">
                 <div className="profile__avatar-container">
                     <button className="profile__avatar-edit-button" onClick={this.props.onEditAvatar}></button>
@@ -31,7 +32,7 @@ export default class Main extends React.Component{
             <section className="elements">
                 {
                     this.state.cards.map((item => {
-                        return <Card onCardClick ={this.props.onCardClick} card={item} key = {item.id}/>
+                        return <Card onCardClick ={this.props.onCardClick} card={item} key={item._id}/>
                     }))
                 }
                 
@@ -39,15 +40,22 @@ export default class Main extends React.Component{
         </main>);
     }
     componentDidMount(){
-        apiClass.getProfileInfo().then(res=>{
+        api.getProfileInfo().then(res=>{
             this.setState(
                 {userName: res.name,
                 userDescription: res.about,
                 userAvatar: res.avatar});
         })
-        apiClass.getCards().then(res =>{
+        .catch(err =>{
+            console.log(err)
+        });
+        
+        api.getCards().then(res =>{
             this.setState({cards: res});
         })
+        .catch(err =>{
+            console.log(err)
+        });
         
     }
 }

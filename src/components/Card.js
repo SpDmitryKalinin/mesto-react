@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-
-export default class Card extends React.Component{
-    constructor(props){
-        super(props);
-    }
-    render(){
-        return (<section className="element" key = {this.props.id}>
-                <img className="element__image" src={this.props.card.link} alt={this.props.card.name} onClick ={() => this.props.onCardClick(this.props.card)}/>
+export default function Card({card, onCardClick}){
+    if(!card){
+        return null
+    }   
+    else{
+        return(
+            <section className="element" key = {card._id}>
+                <img className="element__image" src={card.link} alt={card.name} onClick ={() => onCardClick(card)}/>
                 <div className="element__caption">
-                <h2 className="element__title">{this.props.card.name}</h2>
-                <div className="element__like">
-                    <button type="button" className="element__button-like"></button>
-                    <p className="element__counter-like">{this.props.card.likes.lenght}</p>
+                    <h2 className="element__title">{card.name}</h2>
+                    <div className="element__like">
+                        <button type="button" className="element__button-like"></button>
+                        <p className="element__counter-like">{card.likes.length}</p>
+                    </div>
                 </div>
-            </div>
-            <button className="element__button-delete"></button>
-        </section>)
+                <button className="element__button-delete"></button>
+            </section>
+        )
     }
 }

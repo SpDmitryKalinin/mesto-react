@@ -126,5 +126,5 @@ export class Api{
     }
 }
 
-const apiClass = new Api(token, addressCard, addressInfo);
-export default apiClass;
+const api = new Api(token, addressCard, addressInfo);
+export default api;
