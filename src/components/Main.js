@@ -12,6 +12,24 @@ export default class Main extends React.Component{
             cards: []
         }
     }
+    componentDidMount(){
+        api.getProfileInfo().then(res=>{
+            this.setState(
+                {userName: res.name,
+                userDescription: res.about,
+                userAvatar: res.avatar});
+        })
+        .catch(err =>{
+            console.log(err)
+        });
+        
+        api.getCards().then(res =>{
+            this.setState({cards: res});
+        })
+        .catch(err =>{
+            console.log(err)
+        });
+    }
     render(){
         return (
         <main className="main">
@@ -38,25 +56,6 @@ export default class Main extends React.Component{
                 
             </section>
         </main>);
-    }
-    componentDidMount(){
-        api.getProfileInfo().then(res=>{
-            this.setState(
-                {userName: res.name,
-                userDescription: res.about,
-                userAvatar: res.avatar});
-        })
-        .catch(err =>{
-            console.log(err)
-        });
-        
-        api.getCards().then(res =>{
-            this.setState({cards: res});
-        })
-        .catch(err =>{
-            console.log(err)
-        });
-        
     }
 }
 
