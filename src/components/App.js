@@ -12,14 +12,15 @@ function App() {
     const [selectedCard, setSelectedCard] = useState({});
     function closePopup(handler){
         handler(false);
+        console.log('???');
     }
   return (
     <div className="page">
         <Header/>
         <Main onCardClick = {setSelectedCard} 
-        onEditProfile ={() => setIsEditProfilePopupOpen(!isEditProfilePopupOpen)} 
-        onAddPlace ={() => setisAddPlacePopupOpen(!isAddPlacePopupOpen)} 
-        onEditAvatar ={() => setisEditAvatarPopupOpen(!isEditAvatarPopupOpen)}/>
+        onEditProfile ={() => setIsEditProfilePopupOpen(true)} 
+        onAddPlace ={() => setisAddPlacePopupOpen(true)} 
+        onEditAvatar ={() => setisEditAvatarPopupOpen(true)}/>
         <Footer/>
         <PopupWithForm 
             onClose = {() => closePopup(setisAddPlacePopupOpen)} 
