@@ -5,8 +5,13 @@ import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import api from '../utils/Api';
+import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
+import {currentUserContext} from './../contexts/CurrentUserContext.js';
 
 class App extends React.Component{
+    static contextType = currentUserContext;
     constructor(props){
         super(props);
         this.state = {
@@ -14,10 +19,11 @@ class App extends React.Component{
             isAddPlacePopupOpen: false,
             isEditAvatarPopupOpen: false,
             selectedCard: {},
-            currentUser: ''
+            currentUser: '',
+            cards: []
         }
     }
-
+    
     closePopup(stateValue){
         this.setState({[stateValue]: false});
     }
@@ -25,11 +31,42 @@ class App extends React.Component{
         this.setState({selectedCard: card});
     }
 
-
     componentDidMount(){
+        this.handleInitProfile();
+        this.handleInitCards();
+    }
+
+    handleUpdateUser(name, about){
+        api.patchProfileInfo(name, about).then(res => {
+            this.setState({currentUser: res});
+        })
+        .catch(res =>{
+            console.log(res);
+        })
+    }
+
+    handleUpdateAvatar(inputValue){
+        api.patchProfileAvatar(inputValue).then(res =>{
+            this.setState({currentUser: res});
+        })
+        .catch(res =>{
+            console.log(res);
+        })
+    }
+
+    handleInitCards(){
+        api.getCards().then(res =>{
+            this.setState({cards: res});
+        })
+        .catch(res =>{
+            console.log(res)
+        });
+    }
+
+    handleInitProfile(){
         if(this.state.currentUser === ''){
             api.getProfileInfo().then(res =>{
-                this.setState({currentUser: res._id});
+                this.setState({currentUser: res});
             })
             .catch(res =>{
                 console.log(res);
@@ -37,66 +74,81 @@ class App extends React.Component{
         };
     }
 
+    handleCardLike(card){
+        const isLiked = card.likes.some(i => i._id === this.state.currentUser._id);
+        if(isLiked){
+            api.deleteLike(card._id).then(()=>{
+                this.handleInitCards();
+            })
+            .catch(res =>{
+                console.log(res);
+            })
+        }
+        else{
+            api.putLike(card._id).then(()=>{
+                this.handleInitCards();
+            })
+            .catch(res =>{
+                console.log(res);
+            }) 
+        }
+    }
+
+    handleCardDelete(card){
+        api.deleteCard(card._id).then(()=>{
+            this.handleInitCards();
+        })
+        .catch(res =>{
+            console.log(res);
+        }) 
+    }
+
+    handleAddCard(name, link){
+        api.postCards(name,link).then(res =>{
+            this.setState(state =>{
+                return{
+                    cards: [res, ...state.cards]
+                }
+
+            })
+        })
+        .catch(res =>{
+            console.log(res);
+        })
+    }
+
     render(){
         return(
-        <div className="page">
-            <Header/>
-            <Main 
-                onCardClick = {this.setCardInfo.bind(this)} 
-                onEditProfile ={() => this.setState({isEditProfilePopupOpen: true})}
-                onAddPlace ={() => this.setState({isAddPlacePopupOpen: true})}
-                onEditAvatar ={() => this.setState({isEditAvatarPopupOpen: true})}/>
-            <Footer/>
-            <PopupWithForm 
-                onClose = {() => this.closePopup('isAddPlacePopupOpen')} 
-                isOpen = {this.state.isAddPlacePopupOpen} 
-                name="add" 
-                title="Новое место"
-            >
-                <label>
-                    <input name="place" placeholder = "Название" className="modal-window__item modal-window__place" type="text" required minLength="2" maxLength="30"/>
-                    <span className="modal-window__type-error">Вы пропустили это поле</span>
-                </label>
-                <label>
-                    <input type="url" name="link" placeholder="Ссылка на картинку" className="modal-window__item modal-window__link" required/>
-                    <span className="modal-window__type-error">Вы пропустили это поле</span>
-                </label>
-            </PopupWithForm>
+        <currentUserContext.Provider value={this.state.currentUser}>
+            <div className="page">
+                <Header/>
+                <Main 
+                    onCardClick = {this.setCardInfo.bind(this)} 
+                    onEditProfile ={() => this.setState({isEditProfilePopupOpen: true})}
+                    onAddPlace ={() => this.setState({isAddPlacePopupOpen: true})}
+                    onEditAvatar ={() => this.setState({isEditAvatarPopupOpen: true})}
+                    cards ={this.state.cards}
+                    onCardLike = {this.handleCardLike.bind(this)}
+                    onCardDelete = {this.handleCardDelete.bind(this)}
+                    initCards ={this.handleInitCards.bind(this)}/>
+                <Footer/>
 
-            <PopupWithForm 
-                onClose = {() => this.closePopup('isEditProfilePopupOpen')}
-                isOpen = {this.state.isEditProfilePopupOpen}  
-                name="edit" 
-                title="Редактировать профиль">
-                <label>
-                    <input name="name" placeholder = "Имя" className="modal-window__item modal-window__name" type="text" required minLength="2" maxLength="40"/>
-                    <span className="modal-window__type-error">Вы пропустили это поле</span>
-                </label>
-                <label>
-                    <input name="emloyment" placeholder = "Род деятельности" className="modal-window__item modal-window__employment" type="text" minLength="2" maxLength="200" required/>
-                    <span className="modal-window__type-error">Вы пропустили это поле</span>
-                </label>
-            </PopupWithForm>
+                <AddPlacePopup onAddPlace ={this.handleAddCard.bind(this)} onClose = {() => this.closePopup('isAddPlacePopupOpen')} isOpen = {this.state.isAddPlacePopupOpen}/>
 
-            <PopupWithForm 
-                onClose = {() => this.closePopup('isEditAvatarPopupOpen')} 
-                isOpen = {this.state.isEditAvatarPopupOpen} 
-                name="edit-avatar" 
-                title="Редактировать аватар">
-                <label>
-                    <input type="url" name="link" placeholder="Ссылка на картинку" className="modal-window__item modal-window__link" required/>
-                    <span className="modal-window__type-error">Вы пропустили это поле</span>
-                </label>
-            </PopupWithForm>
+                <EditProfilePopup onClose = {() => this.closePopup('isEditProfilePopupOpen')} isOpen = {this.state.isEditProfilePopupOpen} onUpdateUser ={this.handleUpdateUser.bind(this)}/>
 
-            <PopupWithForm 
-                name="confirm" 
-                title="Вы уверены?" 
-                isOpen = {false}/>
-            <ImagePopup 
-                card = {this.state.selectedCard} 
-                onClose = {() => this.closePopup('selectedCard')}/>
-        </div>);
+                <EditAvatarPopup onUpdateAvatar = {this.handleUpdateAvatar.bind(this)} onClose = {() => this.closePopup('isEditAvatarPopupOpen')} isOpen = {this.state.isEditAvatarPopupOpen}/> 
+
+                <PopupWithForm 
+                    name="confirm" 
+                    title="Вы уверены?" 
+                    isOpen = {false}/>
+                <ImagePopup 
+                    card = {this.state.selectedCard} 
+                    onClose = {() => this.closePopup('selectedCard')}/>
+            </div>
+        </currentUserContext.Provider>
+        );
     }
 }
 

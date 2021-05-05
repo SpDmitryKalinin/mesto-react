@@ -1,4 +1,8 @@
-export default function Card({card, onCardClick}){
+import { useContext } from "react";
+import { currentUserContext } from "../contexts/CurrentUserContext";
+
+export default function Card({card, onCardClick, onCardLike, onCardDelete}){
+    const info = useContext(currentUserContext);
     if(!card){
         return null
     }   
@@ -9,11 +13,11 @@ export default function Card({card, onCardClick}){
                 <div className="element__caption">
                     <h2 className="element__title">{card.name}</h2>
                     <div className="element__like">
-                        <button type="button" className="element__button-like"></button>
+                        <button type="button" onClick ={() => onCardLike(card)} className={`element__button-like ${card.likes.some(i => i._id === info._id) ? "element__button-like_active" : ""}`}></button>
                         <p className="element__counter-like">{card.likes.length}</p>
                     </div>
                 </div>
-                <button className="element__button-delete"></button>
+                {info._id === card.owner._id ? <button className="element__button-delete" onClick={()=>onCardDelete(card)}></button>: <></>}
             </section>
         )
     }
