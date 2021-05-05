@@ -4,7 +4,7 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
-import api from '../utils/Api';
+import Api from '../utils/api';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
@@ -37,7 +37,7 @@ class App extends React.Component{
     }
 
     handleUpdateUser(name, about){
-        api.patchProfileInfo(name, about).then(res => {
+        Api.patchProfileInfo(name, about).then(res => {
             this.setState({currentUser: res});
         })
         .catch(res =>{
@@ -46,7 +46,7 @@ class App extends React.Component{
     }
 
     handleUpdateAvatar(inputValue){
-        api.patchProfileAvatar(inputValue).then(res =>{
+        Api.patchProfileAvatar(inputValue).then(res =>{
             this.setState({currentUser: res});
         })
         .catch(res =>{
@@ -55,7 +55,7 @@ class App extends React.Component{
     }
 
     handleInitCards(){
-        api.getCards().then(res =>{
+        Api.getCards().then(res =>{
             this.setState({cards: res});
         })
         .catch(res =>{
@@ -65,7 +65,7 @@ class App extends React.Component{
 
     handleInitProfile(){
         if(this.state.currentUser === ''){
-            api.getProfileInfo().then(res =>{
+            Api.getProfileInfo().then(res =>{
                 this.setState({currentUser: res});
             })
             .catch(res =>{
@@ -77,7 +77,7 @@ class App extends React.Component{
     handleCardLike(card){
         const isLiked = card.likes.some(i => i._id === this.state.currentUser._id);
         if(isLiked){
-            api.deleteLike(card._id).then(()=>{
+            Api.deleteLike(card._id).then(()=>{
                 this.handleInitCards();
             })
             .catch(res =>{
@@ -85,7 +85,7 @@ class App extends React.Component{
             })
         }
         else{
-            api.putLike(card._id).then(()=>{
+            Api.putLike(card._id).then(()=>{
                 this.handleInitCards();
             })
             .catch(res =>{
@@ -95,7 +95,7 @@ class App extends React.Component{
     }
 
     handleCardDelete(card){
-        api.deleteCard(card._id).then(()=>{
+        Api.deleteCard(card._id).then(()=>{
             this.handleInitCards();
         })
         .catch(res =>{
@@ -104,7 +104,7 @@ class App extends React.Component{
     }
 
     handleAddCard(name, link){
-        api.postCards(name,link).then(res =>{
+        Api.postCards(name,link).then(res =>{
             this.setState(state =>{
                 return{
                     cards: [res, ...state.cards]
