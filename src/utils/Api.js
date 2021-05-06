@@ -1,7 +1,7 @@
 import {addressCard, addressInfo, token } from "./constants";
 
 
-export class Api{
+export class api{
     constructor(token, addressCard, addressInfo){
         this._token = token;
         this._addressCard = addressCard;
