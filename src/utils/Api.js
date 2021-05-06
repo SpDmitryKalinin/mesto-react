@@ -126,5 +126,5 @@ export class api{
     }
 }
 
-const api = new Api(token, addressCard, addressInfo);
+const api = new api(token, addressCard, addressInfo);
 export default api;
