@@ -17,7 +17,7 @@ export default function Card({card, onCardClick, onCardLike, onCardDelete}){
                         <p className="element__counter-like">{card.likes.length}</p>
                     </div>
                 </div>
-                {info._id === card.owner._id ? <button className="element__button-delete" onClick={()=>onCardDelete(card)}></button>: <></>}
+                {info._id === card.owner._id ? <button className="element__button-delete" onClick={()=>{onCardDelete(card)}}></button>: <></>}
             </section>
         )
     }
