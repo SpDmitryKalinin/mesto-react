@@ -28,7 +28,7 @@ export default class Main extends React.Component{
             <section className="elements">
                 {
                     this.props.cards.map((item => {
-                        return <Card onCardDelete = {this.props.onCardDelete.bind(this)} onCardLike = {this.props.onCardLike.bind(this)} onCardClick ={this.props.onCardClick} card={item} key={item._id}/>
+                        return <Card onCardDelete = {this.props.onCardDelete} onCardLike = {this.props.onCardLike} onCardClick ={this.props.onCardClick} card={item} key={item._id}/>
                     }))
                 }
                 

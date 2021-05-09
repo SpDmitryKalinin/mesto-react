@@ -39,6 +39,7 @@ class App extends React.Component{
     handleUpdateUser(name, about){
         api.patchProfileInfo(name, about).then(res => {
             this.setState({currentUser: res});
+            this.closePopup('isEditProfilePopupOpen')
         })
         .catch(res =>{
             console.log(res);
@@ -48,6 +49,7 @@ class App extends React.Component{
     handleUpdateAvatar(inputValue){
         api.patchProfileAvatar(inputValue).then(res =>{
             this.setState({currentUser: res});
+            this.closePopup('isEditAvatarPopupOpen');
         })
         .catch(res =>{
             console.log(res);
@@ -77,26 +79,36 @@ class App extends React.Component{
     handleCardLike(card){
         const isLiked = card.likes.some(i => i._id === this.state.currentUser._id);
         if(isLiked){
-            api.deleteLike(card._id).then(()=>{
-                this.handleInitCards();
-            })
-            .catch(res =>{
-                console.log(res);
+            api.deleteLike(card._id).then(res=>{
+                this.setState(state =>{
+                    return{
+                        cards: state.cards.map((item)=> item._id === card._id ? res : item)
+                    }
+                })
             })
         }
         else{
-            api.putLike(card._id).then(()=>{
-                this.handleInitCards();
+            api.putLike(card._id).then(res=>{
+                this.setState(state =>{
+                    return{
+                        cards: state.cards.map((item)=> item._id === card._id ? res : item)
+                    }
+                })
             })
-            .catch(res =>{
-                console.log(res);
-            }) 
         }
     }
 
     handleCardDelete(card){
         api.deleteCard(card._id).then(()=>{
-            this.handleInitCards();
+            this.setState(state =>{
+                return{
+                    cards: state.cards.filter((item)=>{
+                        if(item._id!==card._id){
+                            return item;
+                        }
+                    })
+                }
+            })
         })
         .catch(res =>{
             console.log(res);
@@ -109,8 +121,8 @@ class App extends React.Component{
                 return{
                     cards: [res, ...state.cards]
                 }
-
             })
+            this.closePopup('isAddPlacePopupOpen');
         })
         .catch(res =>{
             console.log(res);
@@ -133,11 +145,20 @@ class App extends React.Component{
                     initCards ={this.handleInitCards.bind(this)}/>
                 <Footer/>
 
-                <AddPlacePopup onAddPlace ={this.handleAddCard.bind(this)} onClose = {() => this.closePopup('isAddPlacePopupOpen')} isOpen = {this.state.isAddPlacePopupOpen}/>
+                <AddPlacePopup 
+                    onAddPlace ={this.handleAddCard.bind(this)} 
+                    onClose = {() => this.closePopup('isAddPlacePopupOpen')} 
+                    isOpen = {this.state.isAddPlacePopupOpen}/>
 
-                <EditProfilePopup onClose = {() => this.closePopup('isEditProfilePopupOpen')} isOpen = {this.state.isEditProfilePopupOpen} onUpdateUser ={this.handleUpdateUser.bind(this)}/>
+                <EditProfilePopup 
+                    onClose = {() => this.closePopup('isEditProfilePopupOpen')} 
+                    isOpen = {this.state.isEditProfilePopupOpen} 
+                    onUpdateUser ={this.handleUpdateUser.bind(this)}/>
 
-                <EditAvatarPopup onUpdateAvatar = {this.handleUpdateAvatar.bind(this)} onClose = {() => this.closePopup('isEditAvatarPopupOpen')} isOpen = {this.state.isEditAvatarPopupOpen}/> 
+                <EditAvatarPopup 
+                    onUpdateAvatar = {this.handleUpdateAvatar.bind(this)} 
+                    onClose = {() => this.closePopup('isEditAvatarPopupOpen')} 
+                    isOpen = {this.state.isEditAvatarPopupOpen}/> 
 
                 <PopupWithForm 
                     name="confirm" 
